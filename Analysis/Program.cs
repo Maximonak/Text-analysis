@@ -53,8 +53,26 @@ namespace ConsoleApp1
             }
 
             public string getType(){
+                Analysis textAnalyze = new Analysis(text);
+                return textAnalyze.analyzeLength();
+            }
+            //перегрузка метода
+            public string[] getType(string setting){
                 Analysis textAnalyze = new Analysis(text)
-                return textAnalyze.analyzeLength()
+
+                switch (setting)
+                {
+                    case == "wordsCount":
+                        return textAnalyze.analyzeWordsCount();
+                        break;
+                    case == "singleWordsCount":
+                        return textAnalyze.analyzeWordsCount(single:true);
+                    case == "length":
+                        return textAnalyze.analyzeLength();
+                        break;
+                    default:
+                        pass;
+                }
             }
         }
 
@@ -71,6 +89,46 @@ namespace ConsoleApp1
                 if (length < 10) { type = "Короткий"; } else { type = "Длинный"; }
                 return type;
             }
+
+            public string analyzeWordsCount(){
+                int wordsCount = 0;
+                int wordLength = 0;
+                foreach (char i in text)
+                {
+                    if(i != " "){
+                        wordLength++;
+                    } else if (wordLength>0) {
+                        wordsCount++;
+                        wordLength = 0;
+                    }
+                }
+                if (wordLength>0) { wordsCount++; }
+                return $"{wordsCount} слов"
+            }
+            //перегрузка метода
+            public string analyzeWordsCount(bool single){
+                if (single){
+                    int wordsCount = 0;
+                    string word = "";
+                    string wordsPit = "";
+                    foreach (char i in text)
+                    {
+                        if(i != " "){
+                            word += i;
+                        } else if (word!="" && !wordsPit.Contains(word)) {
+                            wordsCount++;
+                            word = "";
+                        } else {
+                            word = "";
+                        }
+                    }
+                    if (word != "") { wordsCount++; }
+                    return $"{wordsCount} отдельных слов"
+                } else {
+                    return this.analyzeWordsCount();
+                }
+            }
+
         }
     }
 }
