@@ -16,7 +16,7 @@ namespace ConsoleApp1
             text = Console.ReadLine();
 
             Text firstText = new Text(title, text);
-            //Console.WriteLine(firstText.getText());
+            
             Console.WriteLine($"тип текста:{firstText.getType()}");
         }
 
@@ -52,34 +52,25 @@ namespace ConsoleApp1
                 }
             }
 
-            public string getType()
-            {
-                Analysis analysis = new Analysis(text);
-                return analysis.analyze();
-            }
-
-            int getLength()
-            {
-                return text.Length;
-            }
-
-            class Analysis
-            {
-
-                private string text;
-                
-
-                public Analysis(string text) { this.text = text; }
-                public string analyze()
-                {
-                    string type;
-                    int length = text.Length;
-
-                    if (length < 10) { type = "Короткий"; } else { type = "Длинный"; }
-                    return type;
-                }
+            public string getType(){
+                Analysis textAnalyze = new Analysis(text)
+                return textAnalyze.analyzeLength()
             }
         }
 
+        class Analysis
+        {
+            private string text;
+            
+            public Analysis(string text) { this.text = text; }
+            
+            public string analyzeLength()
+            {
+                string type;
+                int length = text.Length;
+                if (length < 10) { type = "Короткий"; } else { type = "Длинный"; }
+                return type;
+            }
+        }
     }
 }
