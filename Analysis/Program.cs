@@ -17,7 +17,10 @@ namespace ConsoleApp1
 
             Text firstText = new Text(title, text);
             
-            Console.WriteLine($"тип текста:{firstText.getType()}");
+            Console.WriteLine($"Размер текста:{firstText.getType()}");
+            Console.WriteLine($"Анализ слов:{firstText.getType(setting: "wordsCount")}");
+            Console.WriteLine($"Строгий анализ слов:{firstText.getType(setting: "singleWordsCount")}");
+
         }
 
         class Text
@@ -57,21 +60,20 @@ namespace ConsoleApp1
                 return textAnalyze.analyzeLength();
             }
             //перегрузка метода
-            public string[] getType(string setting){
-                Analysis textAnalyze = new Analysis(text)
+            public string getType(string setting){
+                Analysis textAnalyze = new Analysis(text);
 
                 switch (setting)
                 {
-                    case == "wordsCount":
+                    case "wordsCount":
                         return textAnalyze.analyzeWordsCount();
-                        break;
-                    case == "singleWordsCount":
+                    case "singleWordsCount":
                         return textAnalyze.analyzeWordsCount(single:true);
-                    case == "length":
+                    case "length":
                         return textAnalyze.analyzeLength();
-                        break;
                     default:
-                        pass;
+                        return "Неизвестный тип анализа";
+                    
                 }
             }
         }
@@ -84,10 +86,8 @@ namespace ConsoleApp1
             
             public string analyzeLength()
             {
-                string type;
                 int length = text.Length;
-                if (length < 10) { type = "Короткий"; } else { type = "Длинный"; }
-                return type;
+                return $"{length} символов";
             }
 
             public string analyzeWordsCount(){
@@ -95,7 +95,7 @@ namespace ConsoleApp1
                 int wordLength = 0;
                 foreach (char i in text)
                 {
-                    if(i != " "){
+                    if(i != ' '){
                         wordLength++;
                     } else if (wordLength>0) {
                         wordsCount++;
@@ -103,7 +103,7 @@ namespace ConsoleApp1
                     }
                 }
                 if (wordLength>0) { wordsCount++; }
-                return $"{wordsCount} слов"
+                return $"{wordsCount} слов";
             }
             //перегрузка метода
             public string analyzeWordsCount(bool single){
@@ -113,7 +113,7 @@ namespace ConsoleApp1
                     string wordsPit = "";
                     foreach (char i in text)
                     {
-                        if(i != " "){
+                        if(i != ' '){
                             word += i;
                         } else if (word!="" && !wordsPit.Contains(word)) {
                             wordsCount++;
@@ -123,7 +123,7 @@ namespace ConsoleApp1
                         }
                     }
                     if (word != "") { wordsCount++; }
-                    return $"{wordsCount} отдельных слов"
+                    return $"{wordsCount} отдельных слов";
                 } else {
                     return this.analyzeWordsCount();
                 }
