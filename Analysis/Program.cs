@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp1
 {
@@ -21,7 +19,8 @@ namespace ConsoleApp1
             Console.WriteLine($"Анализ слов:{firstText.getType(setting: "wordsCount")}");
             Console.WriteLine($"Строгий анализ слов:{firstText.getType(setting: "singleWordsCount")}");
             Console.WriteLine("Количество отдельных слов в тексте:");
-            foreach (var i in firstText.getType(setting: "SemanticWordCount")) {
+            foreach (var i in firstText.getType(setting: "SemanticWordCount"))
+            {
                 Console.WriteLine($"{i.Key} - {i.Value}");
             }
 
@@ -44,6 +43,7 @@ namespace ConsoleApp1
                 set
                 {
                     title = value;
+
                 }
             }
 
@@ -59,13 +59,34 @@ namespace ConsoleApp1
                 }
             }
 
-            public string getType() {
+            private string NormalizeText(string text)
+            {
+                string text2;
+                text += " ";
+                text2 = text.Replace(")", " ) ")
+                .Replace("(", " ( ")
+                .Replace("-", " - ")
+                .Replace("!", " ! ")
+                .Replace("?", " ? ")
+                .Replace(":", " : ")
+                .Replace(",", " , ")
+                .Replace(".", " . ")
+                .Replace("\"", " \" ")
+                .Replace("  ", " ");
+                //Console.WriteLine(text);
+                return text2;
+            }
+
+            public string getType()
+            {
                 Analysis textAnalyze = new Analysis(text);
                 return textAnalyze.analyzeLength();
             }
             //перегрузка метода
-            public dynamic getType(string setting) {
-                var textAnalyze = new Analysis.SemanticCore(text);
+            public dynamic getType(string setting)
+            {
+
+                var textAnalyze = new Analysis.SemanticCore(NormalizeText(text));
 
 
                 switch (setting)
@@ -93,6 +114,7 @@ namespace ConsoleApp1
 
             public string analyzeLength()
             {
+
                 int length = text.Length;
                 return $"{length} символов";
             }
@@ -101,6 +123,7 @@ namespace ConsoleApp1
             {
                 int wordsCount = 0;
                 int wordLength = 0;
+
                 foreach (char i in text)
                 {
                     if (i != ' ')
@@ -113,7 +136,7 @@ namespace ConsoleApp1
                         wordLength = 0;
                     }
                 }
-                if (wordLength > 0) { wordsCount++; }
+
                 return $"{wordsCount} слов";
             }
             //перегрузка метода
@@ -124,6 +147,7 @@ namespace ConsoleApp1
                     int wordsCount = 0;
                     string word = "";
                     string wordsPit = "";
+
                     foreach (char i in text)
                     {
                         if (i != ' ')
@@ -140,7 +164,7 @@ namespace ConsoleApp1
                             word = "";
                         }
                     }
-                    if (word != "") { wordsCount++; }
+
                     return $"{wordsCount} отдельных слов";
                 }
                 else
@@ -160,18 +184,36 @@ namespace ConsoleApp1
                     Dictionary<string, int> output = new Dictionary<string, int>();
 
                     string word = "";
+                    bool except = false;
+
                     foreach (char i in text)
                     {
-                        if (i != ' ')
+                        if ((i != ' ' || except) && i != '\"')
                         {
                             word += i;
+                        }
+                        else if (i == '\"')
+                        {
+                            if (except)
+                            {
+                                
+                                except = false;
+                                word += i;
+                                output.Add(word, 1);
+                                word = "";
+                            }
+                            else
+                            {
+                                except = true;
+                                word += i;
+                            }
                         }
                         else if (word != "" && !output.Keys.Contains(word))
                         {
                             output.Add(word, 1);
                             word = "";
                         }
-                        else
+                        else if (word != "")
                         {
                             output[word]++;
                             word = "";
@@ -180,6 +222,6 @@ namespace ConsoleApp1
                     return output;
                 }
             }
-        } 
+        }
     }
 }
