@@ -33,7 +33,7 @@ namespace ConsoleApp1
             protected string text;
 
 
-            public Text(string title, string text) { this.title = title; this.text = text; }
+            public Text(string title, string text) { this.title = title; this.text = text; NormalizeText();}
 
             public string Title
             {
@@ -57,6 +57,18 @@ namespace ConsoleApp1
                 {
                     text = value;
                 }
+            }
+
+            private void NormalizeText() {
+                text = text.Replase(")", " ) ")
+                .Replase("(", " ( ")
+                .Replase("-", " - ")
+                .Replase("!", " ! ")
+                .Replase("?", " ? ")
+                .Replase(":", " : ")
+                .Replase(",", " , ")
+                .Replase(".", " . ")
+                .Replase("  ", " ");
             }
 
             public string getType() {
@@ -101,6 +113,7 @@ namespace ConsoleApp1
             {
                 int wordsCount = 0;
                 int wordLength = 0;
+
                 foreach (char i in text)
                 {
                     if (i != ' ')
@@ -113,7 +126,7 @@ namespace ConsoleApp1
                         wordLength = 0;
                     }
                 }
-                if (wordLength > 0) { wordsCount++; }
+
                 return $"{wordsCount} слов";
             }
             //перегрузка метода
@@ -124,6 +137,7 @@ namespace ConsoleApp1
                     int wordsCount = 0;
                     string word = "";
                     string wordsPit = "";
+
                     foreach (char i in text)
                     {
                         if (i != ' ')
@@ -140,7 +154,7 @@ namespace ConsoleApp1
                             word = "";
                         }
                     }
-                    if (word != "") { wordsCount++; }
+
                     return $"{wordsCount} отдельных слов";
                 }
                 else
@@ -160,11 +174,25 @@ namespace ConsoleApp1
                     Dictionary<string, int> output = new Dictionary<string, int>();
 
                     string word = "";
+                    bool except = false;
+                    
                     foreach (char i in text)
                     {
-                        if (i != ' ')
+                        if (i != ' ' || (except && i != "\""))
                         {
                             word += i;
+                        } 
+                        else if (i = "\"")
+                        {   
+                            if (except){
+                                except = false;
+                                word += i;
+                                output.Add(word, 1);
+                                word = "";
+                            }else{
+                                except = true;
+                                word += i;
+                            }
                         }
                         else if (word != "" && !output.Keys.Contains(word))
                         {
