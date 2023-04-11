@@ -16,12 +16,12 @@ namespace ConsoleApp1
             text = Console.ReadLine();
 
             Text firstText = new Text(title, text);
-            
+
             Console.WriteLine($"Размер текста:{firstText.getType()}");
             Console.WriteLine($"Анализ слов:{firstText.getType(setting: "wordsCount")}");
             Console.WriteLine($"Строгий анализ слов:{firstText.getType(setting: "singleWordsCount")}");
             Console.WriteLine("Количество отдельных слов в тексте:");
-            foreach(var i in firstText.getType(setting: "SemanticWordCount")) {
+            foreach (var i in firstText.getType(setting: "SemanticWordCount")) {
                 Console.WriteLine($"{i.Key} - {i.Value}");
             }
 
@@ -59,106 +59,127 @@ namespace ConsoleApp1
                 }
             }
 
-            public string getType(){
+            public string getType() {
                 Analysis textAnalyze = new Analysis(text);
                 return textAnalyze.analyzeLength();
             }
             //перегрузка метода
-            public string getType(string setting){
-                Analysis textAnalyze = new Analysis(text);
-                SemanticCore SemanticCore = new SemanticCore(text);
+            public dynamic getType(string setting) {
+                var textAnalyze = new Analysis.SemanticCore(text);
+
 
                 switch (setting)
                 {
                     case "wordsCount":
                         return textAnalyze.analyzeWordsCount();
                     case "singleWordsCount":
-                        return textAnalyze.analyzeWordsCount(single:true);
+                        return textAnalyze.analyzeWordsCount(single: true);
                     case "length":
                         return textAnalyze.analyzeLength();
                     case "SemanticWordCount":
-                        return SemanticCore.SemanticWordCount();
+                        return textAnalyze.SemanticWordCount();
                     default:
                         return "Неизвестный тип анализа";
-                    
+
                 }
             }
         }
 
         class Analysis
         {
-            private string text;
-            
+            protected string text;
+
             public Analysis(string text) { this.text = text; }
-            
+
             public string analyzeLength()
             {
                 int length = text.Length;
                 return $"{length} символов";
             }
 
-            public string analyzeWordsCount(){
+            public string analyzeWordsCount()
+            {
                 int wordsCount = 0;
                 int wordLength = 0;
                 foreach (char i in text)
                 {
-                    if(i != ' '){
+                    if (i != ' ')
+                    {
                         wordLength++;
-                    } else if (wordLength>0) {
+                    }
+                    else if (wordLength > 0)
+                    {
                         wordsCount++;
                         wordLength = 0;
                     }
                 }
-                if (wordLength>0) { wordsCount++; }
+                if (wordLength > 0) { wordsCount++; }
                 return $"{wordsCount} слов";
             }
             //перегрузка метода
-            public string analyzeWordsCount(bool single){
-                if (single){
+            public string analyzeWordsCount(bool single)
+            {
+                if (single)
+                {
                     int wordsCount = 0;
                     string word = "";
                     string wordsPit = "";
                     foreach (char i in text)
                     {
-                        if(i != ' '){
+                        if (i != ' ')
+                        {
                             word += i;
-                        } else if (word!="" && !wordsPit.Contains(word)) {
+                        }
+                        else if (word != "" && !wordsPit.Contains(word))
+                        {
                             wordsCount++;
                             word = "";
-                        } else {
+                        }
+                        else
+                        {
                             word = "";
                         }
                     }
                     if (word != "") { wordsCount++; }
                     return $"{wordsCount} отдельных слов";
-                } else {
+                }
+                else
+                {
                     return this.analyzeWordsCount();
                 }
             }
 
-        }
 
-        class SemanticCore : Analysis {
-            public SemanticCore(string text) { this.text = text; }
 
-            public Dictionary<string, int> SemanticWordCount() {
-                Dictionary<string, int> output = new Dictionary<string, int>();
+            public class SemanticCore : Analysis
+            {
+                public SemanticCore(string text) : base(text) { }
 
-                string word = "";
-                foreach (char i in text)
+                public Dictionary<string, int> SemanticWordCount()
+                {
+                    Dictionary<string, int> output = new Dictionary<string, int>();
+
+                    string word = "";
+                    foreach (char i in text)
                     {
-                        if(i != ' '){
+                        if (i != ' ')
+                        {
                             word += i;
-                        } else if (word!="" && !output.Keys.Contains(word)) {
-                            output.Add(word, 1)
+                        }
+                        else if (word != "" && !output.Keys.Contains(word))
+                        {
+                            output.Add(word, 1);
                             word = "";
-                        } else {
+                        }
+                        else
+                        {
                             output[word]++;
                             word = "";
                         }
                     }
-                return output
+                    return output;
+                }
             }
-        }
+        } 
     }
 }
