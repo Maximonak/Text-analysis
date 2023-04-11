@@ -20,6 +20,10 @@ namespace ConsoleApp1
             Console.WriteLine($"Размер текста:{firstText.getType()}");
             Console.WriteLine($"Анализ слов:{firstText.getType(setting: "wordsCount")}");
             Console.WriteLine($"Строгий анализ слов:{firstText.getType(setting: "singleWordsCount")}");
+            Console.WriteLine("Количество отдельных слов в тексте:");
+            foreach(var i in firstText.getType(setting: "SemanticWordCount")) {
+                Console.WriteLine($"{i.Key} - {i.Value}");
+            }
 
         }
 
@@ -62,6 +66,7 @@ namespace ConsoleApp1
             //перегрузка метода
             public string getType(string setting){
                 Analysis textAnalyze = new Analysis(text);
+                SemanticCore SemanticCore = new SemanticCore(text);
 
                 switch (setting)
                 {
@@ -71,6 +76,8 @@ namespace ConsoleApp1
                         return textAnalyze.analyzeWordsCount(single:true);
                     case "length":
                         return textAnalyze.analyzeLength();
+                    case "SemanticWordCount":
+                        return SemanticCore.SemanticWordCount();
                     default:
                         return "Неизвестный тип анализа";
                     
@@ -129,6 +136,29 @@ namespace ConsoleApp1
                 }
             }
 
+        }
+
+        class SemanticCore : Analysis {
+            public SemanticCore(string text) { this.text = text; }
+
+            public Dictionary<string, int> SemanticWordCount() {
+                Dictionary<string, int> output = new Dictionary<string, int>();
+
+                string word = "";
+                foreach (char i in text)
+                    {
+                        if(i != ' '){
+                            word += i;
+                        } else if (word!="" && !output.Keys.Contains(word)) {
+                            output.Add(word, 1)
+                            word = "";
+                        } else {
+                            output[word]++;
+                            word = "";
+                        }
+                    }
+                return output
+            }
         }
     }
 }
